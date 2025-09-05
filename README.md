@@ -5,11 +5,11 @@ file and the passwords are stored in the cli tool pass.
 commands:
 connect to db01
 ```
-./tunnel db01
+./tunnels db01
 ```
 
 set password for this environment
 connect to db01
 ```
-./tunnel -p newpassword db01
+./tunnels -p newpassword db01
 ```
