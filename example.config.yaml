@@ -1,0 +1,9 @@
+databases:
+  db01:
+    host: host.com
+    port: 1234
+    user: user
+    ssh_jump_host: jump.host.com
+    ssh_jump_port: 22
+    local_port: 1111
+    password_pass_path: password #this corresponds to the key for the cli tool pass
