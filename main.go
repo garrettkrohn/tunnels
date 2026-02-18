@@ -33,7 +33,7 @@ func main() {
 
 	var dbName string
 	var insertToPass bool
-	var passName string
+	var password string
 
 	// Check if first argument is "-p" for clipboard-to-pass functionality
 	if os.Args[1] == "-p" {
@@ -41,20 +41,10 @@ func main() {
 			log.Fatalf("Usage: %s -p <password> <db_name>", os.Args[0])
 		}
 		insertToPass = true
+		password = os.Args[2]
 		dbName = os.Args[3]
-		passName = os.Args[2]
 	} else {
 		dbName = os.Args[1]
-	}
-
-	// If -p flag is used, insert clipboard to pass and exit
-	if insertToPass {
-		passCmd := exec.Command("pass", "insert", "-m", "-f", passName)
-		// passCmd.Stdin = strings.NewReader(string(clipboardContent))
-
-		if err := passCmd.Run(); err != nil {
-			fmt.Errorf("failed to insert into pass: %v", err)
-		}
 	}
 
 	usr, err := user.Current()
@@ -71,6 +61,17 @@ func main() {
 	dbConfig, ok := cfg.Databases[dbName]
 	if !ok {
 		log.Fatalf("Database config for %q not found", dbName)
+	}
+
+	// If -p flag is used, insert password to pass
+	if insertToPass {
+		passCmd := exec.Command("pass", "insert", "-m", "-f", dbConfig.PasswordPassPath)
+		passCmd.Stdin = strings.NewReader(password)
+
+		if err := passCmd.Run(); err != nil {
+			log.Fatalf("Failed to insert password into pass at %q: %v", dbConfig.PasswordPassPath, err)
+		}
+		fmt.Printf("Password successfully inserted into pass at: %s\n", dbConfig.PasswordPassPath)
 	}
 
 	// Get password from pass
